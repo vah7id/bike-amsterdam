@@ -46,7 +46,7 @@ camera.position.y = 5;
 camera.position.x = 5;
 
 
-// controls.enabled = false;
+controls.enabled = false;
 
 /* Lights */
 const ambientLight = new AmbientLight(0xffffff, 0.8);
@@ -132,6 +132,31 @@ for(let i = 0 ; i < 8 ; i++) {
   renderBridge(-18 + (i*bridgeWidth), 0, -1, i);
 }
 
+const jump = (minY, maxY) => {
+  let bikeObject = scene.getObjectByName('bike');
+  let newMaxY = maxY;
+
+  if (bikeObject.position.y >= newMaxY) {
+    newMaxY = Math.max(bikeObject.position.y -=0.25, minY);
+    console.log("vlad going down", bikeObject.position.y);
+    bikeObject.position.y = newMaxY;
+  }
+
+  if (bikeObject.position.y < newMaxY) {
+    console.log("vlad going up", bikeObject.position.y);
+    bikeObject.position.y = Math.min(bikeObject.position.y +=0.25, newMaxY);
+  }
+  
+  if (newMaxY !== minY) setTimeout(() => jump(minY, newMaxY), 15);
+}
+
+const doJump = () => {
+  const minY = 2;
+  let maxY = 5;
+  
+  jump(minY, maxY);
+}
+
 const onKeyDown = (event) => {
 	const step = 0.5;
   switch ( event.keyCode ) {
@@ -156,6 +181,10 @@ const onKeyDown = (event) => {
         unloadBridgeLeft();
       }
 			break;
+    
+		case 38:
+      doJump();
+      break;
 	}
 }
 
