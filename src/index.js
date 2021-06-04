@@ -45,8 +45,21 @@ camera.position.z = 10;
 camera.position.y = 5;
 camera.position.x = 5;
 
+// create an AudioListener and add it to the camera
+const listener = new THREE.AudioListener();
+camera.add( listener );
 
-// controls.enabled = false;
+// create a global audio source
+const pedalSound = new THREE.Audio( listener );
+
+// load a sound and set it as the Audio object's buffer
+const audioLoader = new THREE.AudioLoader();
+audioLoader.load( '../assets/pedal.mp3', function( buffer ) {
+	pedalSound.setBuffer( buffer );
+	pedalSound.setVolume( 0.5 );
+});
+
+controls.enabled = false;
 
 /* Lights */
 const ambientLight = new AmbientLight(0xffffff, 0.8);
@@ -128,22 +141,36 @@ const unloadBridgeLeft = () => {
 
 const bridgeWidth = 6;
 
-for(let i = 0 ; i < 7 ; i++) {
-  renderBridge(-12 + (i*bridgeWidth), 0, -1, i);
+for(let i = 0 ; i < 8 ; i++) {
+  renderBridge(-18 + (i*bridgeWidth), 0, -1, i);
 }
+
+const citySound = new THREE.Audio( listener );
+
+// load a sound and set it as the Audio object's buffer
+const cityAudioLoader = new THREE.AudioLoader();
+cityAudioLoader.load( '../assets/city.wav', function( buffer ) {
+  citySound.setBuffer( buffer );
+  citySound.setVolume( 0.5 );
+});
 
 const onKeyDown = (event) => {
 	const step = 0.5;
   switch ( event.keyCode ) {
 		case 39:
+      citySound.play();
+	    pedalSound.play();
+      
+      setTimeout(() => {
+        pedalSound.stop();
+      }, 1000);
+
       xAxis += step * 10;
       let bikeObject = scene.getObjectByName('bike');
-      bikeObject.position.x += step;
+      bikeObject.position.x += step * 1.2;
       if(xAxis % 2 === 0) {
-        bikeObject.position.z -= 0.1;
         bikeObject.position.y -= 0.05;
       } else {
-        bikeObject.position.z += 0.1;
         bikeObject.position.y += 0.05;
       }
 
