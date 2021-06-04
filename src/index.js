@@ -128,8 +128,8 @@ const unloadBridgeLeft = () => {
 
 const bridgeWidth = 6;
 
-for(let i = 0 ; i < 7 ; i++) {
-  renderBridge(-12 + (i*bridgeWidth), 0, -1, i);
+for(let i = 0 ; i < 8 ; i++) {
+  renderBridge(-18 + (i*bridgeWidth), 0, -1, i);
 }
 
 const onKeyDown = (event) => {
@@ -138,12 +138,10 @@ const onKeyDown = (event) => {
 		case 39:
       xAxis += step * 10;
       let bikeObject = scene.getObjectByName('bike');
-      bikeObject.position.x += step;
+      bikeObject.position.x += step * 1.2;
       if(xAxis % 2 === 0) {
-        bikeObject.position.z -= 0.1;
         bikeObject.position.y -= 0.05;
       } else {
-        bikeObject.position.z += 0.1;
         bikeObject.position.y += 0.05;
       }
 
