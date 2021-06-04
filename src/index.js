@@ -5,7 +5,6 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { preloader } from "./loader";
 import { GLTFResolver } from "./loader/resolvers/GLTFResolver";
 import { createMeshWithTexture } from "./meshHelper";
-    
    
 
 /* Init renderer and canvas */
@@ -19,12 +18,15 @@ container.style.overflow = "hidden";
 container.style.margin = 0;
 container.appendChild(renderer.domElement);
 
+let xAxis = 10;
+
+
 /* Main scene and camera */
 const scene = new Scene();
 const camera = new PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
-  0.1,
+  0.1, 
   1000
 );
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -111,9 +113,24 @@ const renderBridge = (x, y, z) => {
   });
 }
 
-for(let i = 0 ; i < 20 ; i++) {
-  renderBridge(-20 + (i*3.5), -6, -2);
+// render the bridge objects
+for(let i = 0 ; i < 8 ; i++) {
+  renderBridge(-20 + (i*6), -6, -2);
 }
+
+const onKeyDown = (event) => {
+	const step = 0.5;
+  switch ( event.keyCode ) {
+		case 39:
+      xAxis += step * 10;
+      renderBridge(xAxis + 10, -6, -2);
+			camera.position.x += step;
+			break;
+	}
+}
+
+
+document.addEventListener( 'keydown', onKeyDown, false );
 
 /**
  Resize canvas
@@ -136,7 +153,7 @@ window.requestAnimationFrame(animate);
  Render loop
 */
 function render() {
-  controls.update();
+  //controls.update();
   renderer.clear();
   renderer.render(scene, camera);
 }
