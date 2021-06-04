@@ -4,6 +4,7 @@ import { WebGLRenderer, Scene, PerspectiveCamera, PointLight, AmbientLight } fro
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { preloader } from "./loader";
 import { GLTFResolver } from "./loader/resolvers/GLTFResolver";
+import { createMeshWithTexture } from "./meshHelper";
     
    
 
@@ -75,6 +76,9 @@ preloader
     plane.receiveShadow = true;
     plane.rotation.x = -Math.PI / 2;
     scene.add(plane);
+
+    const backgroundPlane = createMeshWithTexture();
+    scene.add(backgroundPlane);
 });
 
     
