@@ -32,8 +32,9 @@ const camera = new PerspectiveCamera(
 const controls = new OrbitControls(camera, renderer.domElement);
 camera.position.z = 10;
 camera.position.y = 0;
+// camera.position.x = -500;
 
-controls.enabled = false;
+// controls.enabled = false;
 
 /* Lights */
 const ambientLight = new AmbientLight(0xffffff, 0.8);
@@ -57,7 +58,7 @@ window.addEventListener("resize", onResize);
 // Loading the cool bike model
 preloader.init(new GLTFResolver());
 preloader
-  .load([{ id: "model", type: "gltf", url: "https://market-assets.fra1.cdn.digitaloceanspaces.com/market-assets/models/bike/model.gltf" }])
+  .load([{ id: "model", type: "gltf", url: "../assets/bike2.gltf" }])
   .then(([model]) => {
     onResize();
     animate();
@@ -69,18 +70,18 @@ preloader
       }
     });
 
+    obj.position.x = -5;
+    obj.position.y = 2;
+    obj.position.z = 0;
+
     scene.add(obj);
 
-    const plane = new THREE.Mesh(
-      new THREE.PlaneBufferGeometry(100, 100),
-      new THREE.MeshStandardMaterial({ color: "red" })
-    );
-    plane.receiveShadow = true;
-    plane.rotation.x = -Math.PI / 2;
-    scene.add(plane);
-
-    const backgroundPlane = createMeshWithTexture();
+    const backgroundPlane = createMeshWithTexture("../assets/bg-amsterdam-6-web.jpeg", 10, -Math.PI/30, 10, -5, 400, 1000, 20);
     scene.add(backgroundPlane);
+
+
+    const brickWall = createMeshWithTexture("../assets/stone-texture.jpg", 50, -Math.PI/30, -2.5, 2, 0, 1000, 5);
+    scene.add(brickWall);
 });
 
     
@@ -97,25 +98,16 @@ const renderBridge = (x, y, z) => {
     obj.position.x = x;
     obj.position.y = y;
     obj.position.z = z;
-    obj.scale.set(1.5,1.5,1.5);
+    obj.scale.set(2,1.5,3);
 
     scene.add(obj);
-
-    const plane = new THREE.Mesh(
-      new THREE.PlaneBufferGeometry(1000, 1000),
-      new THREE.MeshStandardMaterial({ color: "red" })
-    );
-    plane.receiveShadow = true;
-    plane.rotation.x = -Math.PI / 2;
-    scene.add(plane);
     
     bridgeObjects.push(obj);
   });
 }
 
-// render the bridge objects
 for(let i = 0 ; i < 8 ; i++) {
-  renderBridge(-20 + (i*6), -6, -2);
+  renderBridge(-12 + (i*6), 0, -1);
 }
 
 const onKeyDown = (event) => {
@@ -123,7 +115,8 @@ const onKeyDown = (event) => {
   switch ( event.keyCode ) {
 		case 39:
       xAxis += step * 10;
-      renderBridge(xAxis + 10, -6, -2);
+
+      if (xAxis > 30 - 12 ) renderBridge(xAxis + 12, 0, -1);
 			camera.position.x += step;
 			break;
 	}
