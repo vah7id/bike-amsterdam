@@ -1,14 +1,15 @@
 
-    import * as THREE from "three";
-    import { WebGLRenderer, Scene, PerspectiveCamera, PointLight, AmbientLight } from "three";
-    import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-    import { preloader } from "./loader";
-    import { GLTFResolver } from "./loader/resolvers/GLTFResolver";
+import * as THREE from "three";
+import { WebGLRenderer, Scene, PerspectiveCamera, PointLight, AmbientLight } from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { preloader } from "./loader";
+import { GLTFResolver } from "./loader/resolvers/GLTFResolver";
     
    
 
 /* Init renderer and canvas */
 const container = document.body;
+const bridgeObjects = [];
 const renderer = new WebGLRenderer();
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -29,15 +30,16 @@ const controls = new OrbitControls(camera, renderer.domElement);
 camera.position.z = 10;
 camera.position.y = 0;
 
+controls.enabled = false;
 
 /* Lights */
 const ambientLight = new AmbientLight(0xffffff, 0.8);
 const frontLight = new PointLight(0xffffff, 0.8);
 const backLight = new PointLight(0xffffff, 0.8);
-frontLight.castShadow = true;
+frontLight.castShadow = false;
 frontLight.shadow.mapSize.width = 1024;
 frontLight.shadow.mapSize.height = 1024;
-backLight.castShadow = true;
+backLight.castShadow = false;
 backLight.shadow.mapSize.width = 1024;
 backLight.shadow.mapSize.height = 1024;
 frontLight.position.set(20, 20, 20);
@@ -48,33 +50,67 @@ scene.add(ambientLight);
 
 /* Various event listeners */
 window.addEventListener("resize", onResize);
-    /* Preloader */
-    preloader.init(new GLTFResolver());
-    preloader
-      .load([{ id: "model", type: "gltf", url: "https://market-assets.fra1.cdn.digitaloceanspaces.com/market-assets/models/bike/model.gltf" }])
-      .then(([model]) => {
-        onResize();
-        animate();
+    
+// Loading the cool bike model
+preloader.init(new GLTFResolver());
+preloader
+  .load([{ id: "model", type: "gltf", url: "https://market-assets.fra1.cdn.digitaloceanspaces.com/market-assets/models/bike/model.gltf" }])
+  .then(([model]) => {
+    onResize();
+    animate();
 
-        const obj = model.scene.scene;
-        obj.traverse((obj) => {
-          if (obj.isMesh) {
-            obj.castShadow = obj.receiveShadow = true;
-          }
-        });
-        scene.add(obj);
+    const obj = model.scene.scene;
+    obj.traverse((obj) => {
+      if (obj.isMesh) {
+        obj.castShadow = obj.receiveShadow = true;
+      }
+    });
 
-        const plane = new THREE.Mesh(
-          new THREE.PlaneBufferGeometry(100, 100),
-          new THREE.MeshStandardMaterial({ color: "white" })
-        );
-        plane.receiveShadow = true;
-        plane.rotation.x = -Math.PI / 2;
-        scene.add(plane);
-      });
+    scene.add(obj);
+
+    const plane = new THREE.Mesh(
+      new THREE.PlaneBufferGeometry(100, 100),
+      new THREE.MeshStandardMaterial({ color: "red" })
+    );
+    plane.receiveShadow = true;
+    plane.rotation.x = -Math.PI / 2;
+    scene.add(plane);
+});
 
     
-   
+const renderBridge = (x, y, z) => {
+  // Loading the brdige model
+  preloader
+  .load([{ id: "model", type: "gltf", url: "https://market-assets.fra1.cdn.digitaloceanspaces.com/market-assets/models/bridge-01/model.gltf" }])
+  .then(([model]) => {
+    onResize();
+    animate();
+
+    let obj = model.scene.scene;
+
+    obj.position.x = x;
+    obj.position.y = y;
+    obj.position.z = z;
+    obj.scale.set(1.5,1.5,1.5);
+
+    scene.add(obj);
+
+    const plane = new THREE.Mesh(
+      new THREE.PlaneBufferGeometry(1000, 1000),
+      new THREE.MeshStandardMaterial({ color: "red" })
+    );
+    plane.receiveShadow = true;
+    plane.rotation.x = -Math.PI / 2;
+    scene.add(plane);
+    
+    bridgeObjects.push(obj);
+  });
+}
+
+for(let i = 0 ; i < 20 ; i++) {
+  renderBridge(-20 + (i*3.5), -6, -2);
+}
+
 /**
  Resize canvas
 */
