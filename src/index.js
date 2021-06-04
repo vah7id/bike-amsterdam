@@ -18,6 +18,17 @@ container.style.overflow = "hidden";
 container.style.margin = 0;
 container.appendChild(renderer.domElement);
 
+const logo = document.createElement('img');
+logo.setAttribute('src', '../assets/logo.png');
+logo.style.zIndex = 1000;
+logo.style.position = 'fixed';
+logo.style.right = '0px';
+logo.style.top = '0px';
+logo.style.width = '150px';
+
+
+container.appendChild(logo);
+
 let xAxis = 10;
 
 
@@ -75,13 +86,15 @@ preloader
     obj.position.y = 2;
     obj.position.z = 0;
 
+    obj.name = 'bike';
+
     scene.add(obj);
 
     const backgroundPlane = createMeshWithTexture("../assets/bg-amsterdam-6-web.jpeg", 20, -Math.PI/30, 10, -5, 400, 1000, 20);
     scene.add(backgroundPlane);
 
 
-    const brickWall = createMeshWithTexture("../assets/stone-texture.jpg", 50, -Math.PI/30, -2.5, 2, 0, 1000, 5);
+    const brickWall = createMeshWithTexture("../assets/canal.jpg", 50, -Math.PI/30, -2.5, 2, 0, 1000, 5);
     scene.add(brickWall);
 });
 
@@ -124,6 +137,15 @@ const onKeyDown = (event) => {
   switch ( event.keyCode ) {
 		case 39:
       xAxis += step * 10;
+      let bikeObject = scene.getObjectByName('bike');
+      bikeObject.position.x += step;
+      if(xAxis % 2 === 0) {
+        bikeObject.position.z -= 0.1;
+        bikeObject.position.y -= 0.05;
+      } else {
+        bikeObject.position.z += 0.1;
+        bikeObject.position.y += 0.05;
+      }
 
 			camera.position.x += step;
       if (xAxis === 40 ) {
@@ -163,7 +185,6 @@ window.requestAnimationFrame(animate);
  Render loop
 */
 function render() {
-  //controls.update();
   renderer.clear();
   renderer.render(scene, camera);
 }
