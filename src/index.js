@@ -31,10 +31,11 @@ const camera = new PerspectiveCamera(
 );
 const controls = new OrbitControls(camera, renderer.domElement);
 camera.position.z = 10;
-camera.position.y = 0;
-// camera.position.x = -500;
+camera.position.y = 5;
+camera.position.x = 5;
 
-// controls.enabled = false;
+
+controls.enabled = false;
 
 /* Lights */
 const ambientLight = new AmbientLight(0xffffff, 0.8);
@@ -76,7 +77,7 @@ preloader
 
     scene.add(obj);
 
-    const backgroundPlane = createMeshWithTexture("../assets/bg-amsterdam-6-web.jpeg", 10, -Math.PI/30, 10, -5, 400, 1000, 20);
+    const backgroundPlane = createMeshWithTexture("../assets/bg-amsterdam-6-web.jpeg", 20, -Math.PI/30, 10, -5, 400, 1000, 20);
     scene.add(backgroundPlane);
 
 
@@ -98,7 +99,7 @@ const renderBridge = (x, y, z) => {
     obj.position.x = x;
     obj.position.y = y;
     obj.position.z = z;
-    obj.scale.set(2,1.5,3);
+    obj.scale.set(2,2,3);
 
     scene.add(obj);
     
