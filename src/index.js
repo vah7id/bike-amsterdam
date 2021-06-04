@@ -35,7 +35,7 @@ camera.position.y = 5;
 camera.position.x = 5;
 
 
-controls.enabled = false;
+// controls.enabled = false;
 
 /* Lights */
 const ambientLight = new AmbientLight(0xffffff, 0.8);
@@ -86,7 +86,7 @@ preloader
 });
 
     
-const renderBridge = (x, y, z) => {
+const renderBridge = (x, y, z, i = null) => {
   // Loading the brdige model
   preloader
   .load([{ id: "model", type: "gltf", url: "https://market-assets.fra1.cdn.digitaloceanspaces.com/market-assets/models/bridge-01/model.gltf" }])
@@ -103,12 +103,20 @@ const renderBridge = (x, y, z) => {
 
     scene.add(obj);
     
-    bridgeObjects.push(obj);
+    if (i !== null) bridgeObjects[i] = obj;
+    if (!i) bridgeObjects.push(obj);
   });
 }
 
-for(let i = 0 ; i < 8 ; i++) {
-  renderBridge(-12 + (i*6), 0, -1);
+const unloadBridgeLeft = () => {
+  scene.remove(bridgeObjects[0]);
+  bridgeObjects.shift();
+}
+
+const bridgeWidth = 6;
+
+for(let i = 0 ; i < 7 ; i++) {
+  renderBridge(-12 + (i*bridgeWidth), 0, -1, i);
 }
 
 const onKeyDown = (event) => {
@@ -117,8 +125,16 @@ const onKeyDown = (event) => {
 		case 39:
       xAxis += step * 10;
 
-      if (xAxis > 30 - 12 ) renderBridge(xAxis + 12, 0, -1);
 			camera.position.x += step;
+      if (xAxis === 40 ) {
+        renderBridge(camera.position.x + 18, 0, -1);
+        unloadBridgeLeft();
+      }
+      // still too frequent but good enough
+      if (xAxis > 40 &&  xAxis % 60 === 0 ) {
+        renderBridge(camera.position.x + 24, 0, -1);
+        unloadBridgeLeft();
+      }
 			break;
 	}
 }
